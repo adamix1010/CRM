@@ -1,0 +1,1127 @@
+Index: agents/templates/agents/agent_delete.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/templates/agents/agent_delete.html b/agents/templates/agents/agent_delete.html
+new file mode 100644
+--- /dev/null	
++++ b/agents/templates/agents/agent_delete.html	
+@@ -0,0 +1,13 @@
++{% extends "base.html" %}
++
++{% block content %}
++<a href="{% url 'agents:agent-list' %}">Leads</a>
++<hr>
++<h1>Are you sure you want to delete agent?</h1>
++<form method="post">
++    {% csrf_token %}
++    {{ form.as_p}}
++    <button>SUBMIT</button>
++</form>
++<a href="{% url 'agents:agent-detail' agent.pk %}">Cancel</a>
++{% endblock content %}
+\ No newline at end of file
+Index: agents/templates/agents/agent_create.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"base.html\" %}\r\n\r\n{% block content %}\r\n    <a href = \"{% url 'agents:agent-list' %}\">Agents</a>\r\n    <hr>\r\n    <h1>Create a new agent</h1>\r\n    <form method=\"post\">\r\n         {% csrf_token %}\r\n         {{ form.as_p}}\r\n        <button>SUBMIT</button>\r\n    </form>\r\n{% endblock content %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/templates/agents/agent_create.html b/agents/templates/agents/agent_create.html
+--- a/agents/templates/agents/agent_create.html	
++++ b/agents/templates/agents/agent_create.html	
+@@ -1,12 +1,12 @@
+ {% extends "base.html" %}
+ 
+ {% block content %}
+-    <a href = "{% url 'agents:agent-list' %}">Agents</a>
+-    <hr>
+-    <h1>Create a new agent</h1>
+-    <form method="post">
+-         {% csrf_token %}
+-         {{ form.as_p}}
+-        <button>SUBMIT</button>
+-    </form>
++<a href="{% url 'agents:agent-list' %}">Agents</a>
++<hr>
++<h1>Create a new agent</h1>
++<form method="post">
++    {% csrf_token %}
++    {{ form.as_p}}
++    <button>SUBMIT</button>
++</form>
+ {% endblock content %}
+\ No newline at end of file
+Index: agents/forms.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django import forms\r\nfrom Leads.models import Agent\r\n\r\n\r\nclass AgentModelForm(forms.ModelForm):\r\n    class Meta:\r\n        model = Agent\r\n        fields = (\r\n            'user',\r\n        )
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/forms.py b/agents/forms.py
+--- a/agents/forms.py	
++++ b/agents/forms.py	
+@@ -1,4 +1,5 @@
+ from django import forms
++
+ from Leads.models import Agent
+ 
+ 
+@@ -7,4 +8,4 @@
+         model = Agent
+         fields = (
+             'user',
+-        )
+\ No newline at end of file
++        )
+Index: agents/templates/agents/agent_list.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/templates/agents/agent_list.html b/agents/templates/agents/agent_list.html
+new file mode 100644
+--- /dev/null	
++++ b/agents/templates/agents/agent_list.html	
+@@ -0,0 +1,42 @@
++{% extends "base.html" %}
++
++{% block content %}
++
++
++<section class="text-gray-600 body-font">
++    <div class="container px-5 py-24 mx-auto flex flex-wrap">
++        <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200">
++            <div>
++                <h1 class="text-4xl text-gray-800">Agents</h1>
++            </div>
++            <div>
++                <a class="text-gray-500 hover:text-blue-500" href="{% url 'agents:agent-create' %}">Create a new
++                    agent</a>
++            </div>
++        </div>
++        <div class="flex flex-wrap -m-4">
++            {% for agent in object_list %}
++            <div class="p-4 lg:w-1/2 md:w-full">
++                <div class="flex border-2 rounded-lg border-gray-200 border-opacity-50 p-8 sm:flex-row flex-col">
++                    <div class="flex-grow">
++                        <h2 class="text-gray-900 text-lg title-font font-medium mb-3">
++                            {{agent.user.username}}
++                        </h2>
++                        <a , class="mt-3 text-green-500 inline-flex items-center"
++                           href="{% url 'agents:agent-detail' agent.pk %}">
++                            Detail View
++                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" stroke-linecap="round"
++                                 stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
++                                <path d="M5 12h14M12 5l7 7-7 7"></path>
++                            </svg>
++                        </a>
++                    </div>
++                </div>
++            </div>
++            {% endfor %}
++        </div>
++    </div>
++</section>
++
++{% endblock content %}
++
+Index: agents/urls.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from CRM.urls import path\r\nfrom .views import AgentListView, AgentCreateView, AgentDetailView, AgentUpdateView, AgentDeleteView\r\napp_name = 'agents'\r\n\r\nurlpatterns = [\r\n    path('', AgentListView.as_view(), name='agent-list'),\r\n    path('<int:pk>/', AgentDetailView.as_view(), name='agent-detail'),\r\n    path('<int:pk>/update/', AgentUpdateView.as_view(), name='agent-update'),\r\n    path('<int:pk>/delete/', AgentDeleteView.as_view(), name='agent-delete'),\r\n    path('create/', AgentCreateView.as_view(), name='agent-create'),\r\n\r\n]\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/urls.py b/agents/urls.py
+--- a/agents/urls.py	
++++ b/agents/urls.py	
+@@ -1,5 +1,6 @@
+ from CRM.urls import path
+ from .views import AgentListView, AgentCreateView, AgentDetailView, AgentUpdateView, AgentDeleteView
++
+ app_name = 'agents'
+ 
+ urlpatterns = [
+Index: agents/tests.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/tests.py b/agents/tests.py
+new file mode 100644
+--- /dev/null	
++++ b/agents/tests.py	
+@@ -0,0 +1,1 @@
++# Create your tests here.
+Index: agents/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/views.py b/agents/views.py
+new file mode 100644
+--- /dev/null	
++++ b/agents/views.py	
+@@ -0,0 +1,59 @@
++from django.contrib.auth.mixins import LoginRequiredMixin
++from django.shortcuts import reverse
++from django.views import generic
++
++from Leads.models import Agent
++from .forms import AgentModelForm
++
++
++class AgentListView(LoginRequiredMixin, generic.ListView):
++    template_name = "agents/agent_list.html"
++
++    def get_queryset(self):
++        organisation = self.request.user.userprofile
++        return Agent.objects.filter(organisation=organisation)
++
++
++class AgentCreateView(LoginRequiredMixin, generic.CreateView):
++    template_name = "agents/agent_create.html"
++    form_class = AgentModelForm
++
++    def get_success_url(self):
++        return reverse("agents:agent-list")
++
++    def form_valid(self, form):
++        agent = form.save(commit=False)
++        agent.organisation = self.request.user.userprofile
++        agent.save
++        return super(AgentCreateView, self).form_valid(form)
++
++
++class AgentDetailView(LoginRequiredMixin, generic.DetailView):
++    template_name = "agents/agent_detail.html"
++
++    def get_queryset(self):
++        organisation = self.request.user.userprofile
++        return Agent.objects.filter(organisation=organisation)
++
++
++class AgentUpdateView(LoginRequiredMixin, generic.UpdateView):
++    template_name = "agents/agent_update.html"
++    form_class = AgentModelForm
++
++    def get_queryset(self):
++        organisation = self.request.user.userprofile
++        return Agent.objects.filter(organisation=organisation)
++
++    def get_success_url(self):
++        return reverse("agents:agent-detail", kwargs={'pk': self.object.pk})
++
++
++class AgentDeleteView(LoginRequiredMixin, generic.DeleteView):
++    template_name = "agents/agent_delete.html"
++
++    def get_queryset(self):
++        organisation = self.request.user.userprofile
++        return Agent.objects.filter(organisation=organisation)
++
++    def get_success_url(self):
++        return reverse("agents:agent-list")
+Index: agents/models.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/models.py b/agents/models.py
+new file mode 100644
+--- /dev/null	
++++ b/agents/models.py	
+@@ -0,0 +1,1 @@
++# Create your models here.
+Index: agents/admin.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/admin.py b/agents/admin.py
+new file mode 100644
+--- /dev/null	
++++ b/agents/admin.py	
+@@ -0,0 +1,1 @@
++# Register your models here.
+Index: agents/apps.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/apps.py b/agents/apps.py
+new file mode 100644
+--- /dev/null	
++++ b/agents/apps.py	
+@@ -0,0 +1,5 @@
++from django.apps import AppConfig
++
++
++class AgentsConfig(AppConfig):
++    name = 'agents'
+Index: Leads/migrations/0002_auto_20230110_2037.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/migrations/0002_auto_20230110_2037.py b/Leads/migrations/0002_auto_20230110_2037.py
+new file mode 100644
+--- /dev/null	
++++ b/Leads/migrations/0002_auto_20230110_2037.py	
+@@ -0,0 +1,33 @@
++# Generated by Django 3.1.4 on 2023-01-10 19:37
++
++import django.db.models.deletion
++from django.conf import settings
++from django.db import migrations, models
++
++
++class Migration(migrations.Migration):
++    dependencies = [
++        ('Leads', '0001_initial'),
++    ]
++
++    operations = [
++        migrations.AlterField(
++            model_name='lead',
++            name='addons',
++            field=models.FileField(blank=True, null=True, upload_to=''),
++        ),
++        migrations.CreateModel(
++            name='UserProfile',
++            fields=[
++                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
++                (
++                'user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
++            ],
++        ),
++        migrations.AddField(
++            model_name='agent',
++            name='organisation',
++            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='Leads.userprofile'),
++            preserve_default=False,
++        ),
++    ]
+Index: Leads/templates/landing.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends 'base.html' %}\r\n\r\n{% block content %}\r\n<section class=\"text-gray-600 body-font\">\r\n  <div class=\"container mx-auto flex px-5 py-24 items-center justify-center flex-col\">\r\n    <img class=\"lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded\" alt=\"hero\" src=\"https://dummyimage.com/720x600\">\r\n    <div class=\"text-center lg:w-2/3 w-full\">\r\n      <h1 class=\"title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900\">Django based CRM</h1>\r\n      <p class=\"mb-8 leading-relaxed\">To do:Add description later</p>\r\n      <div class=\"flex justify-center\">\r\n        <button class=\"inline-flex text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg\">Button</button>\r\n        <button class=\"ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg\">Button</button>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</section>\r\n{% endblock content %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/landing.html b/Leads/templates/landing.html
+--- a/Leads/templates/landing.html	
++++ b/Leads/templates/landing.html	
+@@ -2,16 +2,21 @@
+ 
+ {% block content %}
+ <section class="text-gray-600 body-font">
+-  <div class="container mx-auto flex px-5 py-24 items-center justify-center flex-col">
+-    <img class="lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded" alt="hero" src="https://dummyimage.com/720x600">
+-    <div class="text-center lg:w-2/3 w-full">
+-      <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Django based CRM</h1>
+-      <p class="mb-8 leading-relaxed">To do:Add description later</p>
+-      <div class="flex justify-center">
+-        <button class="inline-flex text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">Button</button>
+-        <button class="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg">Button</button>
+-      </div>
+-    </div>
+-  </div>
++    <div class="container mx-auto flex px-5 py-24 items-center justify-center flex-col">
++        <img alt="hero" class="lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded"
++             src="https://dummyimage.com/720x600">
++        <div class="text-center lg:w-2/3 w-full">
++            <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Django based CRM</h1>
++            <p class="mb-8 leading-relaxed">To do:Add description later</p>
++            <div class="flex justify-center">
++                <button class="inline-flex text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded text-lg">
++                    Button
++                </button>
++                <button class="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg">
++                    Button
++                </button>
++            </div>
++        </div>
++    </div>
+ </section>
+ {% endblock content %}
+\ No newline at end of file
+Index: CRM/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django.shortcuts import render,  reverse\r\nfrom django.contrib.auth.forms import UserCreationForm\r\nfrom django.views.generic import CreateView\r\nfrom Leads.forms import NewUserCreationForm\r\ndef landing_page(request):\r\n\r\n    return render(request, \"landing.html\")\r\n\r\nclass SignupView(CreateView):\r\n    template_name = \"registration/signup.html\"\r\n    form_class = NewUserCreationForm\r\n    def get_success_url(self):\r\n        return reverse(\"login\")
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/CRM/views.py b/CRM/views.py
+--- a/CRM/views.py	
++++ b/CRM/views.py	
+@@ -1,13 +1,16 @@
+-from django.shortcuts import render,  reverse
+-from django.contrib.auth.forms import UserCreationForm
++from django.shortcuts import render, reverse
+ from django.views.generic import CreateView
++
+ from Leads.forms import NewUserCreationForm
++
++
+ def landing_page(request):
+-
+     return render(request, "landing.html")
+ 
++
+ class SignupView(CreateView):
+     template_name = "registration/signup.html"
+     form_class = NewUserCreationForm
++
+     def get_success_url(self):
+-        return reverse("login")
+\ No newline at end of file
++        return reverse("login")
+Index: Leads/templates/base.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\n\r\n<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta name=\"viewport\" content=\"\"width=\"device-width, initial-scale=1.0\">\r\n    <script src=\"https://cdn.tailwindcss.com\"></script>\r\n    <title>baseTemplate</title>\r\n</head>\r\n<body>\r\n    <div class=\"max-w-7xl mx-auto\">\r\n        {% include 'navbar.html' %}\r\n        {% block content %}\r\n        {% endblock content %}\r\n    </div>\r\n\r\n</body>\r\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/base.html b/Leads/templates/base.html
+--- a/Leads/templates/base.html	
++++ b/Leads/templates/base.html	
+@@ -1,19 +1,17 @@
+-
+-
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+-    <meta name="viewport" content=""width="device-width, initial-scale=1.0">
++    <meta content="" name="viewport" width="device-width, initial-scale=1.0">
+     <script src="https://cdn.tailwindcss.com"></script>
+     <title>baseTemplate</title>
+ </head>
+ <body>
+-    <div class="max-w-7xl mx-auto">
+-        {% include 'navbar.html' %}
+-        {% block content %}
+-        {% endblock content %}
+-    </div>
++<div class="max-w-7xl mx-auto">
++    {% include 'navbar.html' %}
++    {% block content %}
++    {% endblock content %}
++</div>
+ 
+ </body>
+ </html>
+\ No newline at end of file
+Index: Leads/templates/navbar.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><header class=\"text-gray-600 body-font\">\r\n  <div class=\"container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center\">\r\n    <a class=\"flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0\">\r\n      <svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" class=\"w-10 h-10 text-white p-2 bg-green-500 rounded-full\" viewBox=\"0 0 24 24\">\r\n        <path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"></path>\r\n      </svg>\r\n      <span class=\"ml-3 text-xl\">Dera-CRM</span>\r\n    </a>\r\n    <nav class=\"md:ml-auto flex flex-wrap items-center text-base justify-center\">\r\n      <a href=\"{% url 'leads:lead-list' %}\" class=\"mr-5 hover:text-gray-900\">Leads</a>\r\n      {% if not request.user.is_authenticated %}\r\n      <a href=\"{% url 'signup' %}\" class=\"mr-5 hover:text-gray-900\">Signup</a>\r\n      {% endif %}\r\n    </nav>\r\n    {% if request.user.is_authenticated %}\r\n      You are logged in: {{ request.user.username }}\r\n       <a href=\"{% url 'logout' %}\" class=\"ml-3 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0\">Log-out\r\n      <svg fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" class=\"w-4 h-4 ml-1\" viewBox=\"0 0 24 24\">\r\n        <path d=\"M5 12h14M12 5l7 7-7 7\"></path>\r\n      </svg>\r\n    {% else %}\r\n    <a href=\"{% url 'login' %}\" class=\"inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0\">Log-In\r\n      <svg fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" class=\"w-4 h-4 ml-1\" viewBox=\"0 0 24 24\">\r\n        <path d=\"M5 12h14M12 5l7 7-7 7\"></path>\r\n      </svg>\r\n    {% endif %}\r\n    </a>\r\n  </div>\r\n</header>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/navbar.html b/Leads/templates/navbar.html
+--- a/Leads/templates/navbar.html	
++++ b/Leads/templates/navbar.html	
+@@ -1,29 +1,35 @@
+ <header class="text-gray-600 body-font">
+-  <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+-    <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-green-500 rounded-full" viewBox="0 0 24 24">
+-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+-      </svg>
+-      <span class="ml-3 text-xl">Dera-CRM</span>
+-    </a>
+-    <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+-      <a href="{% url 'leads:lead-list' %}" class="mr-5 hover:text-gray-900">Leads</a>
+-      {% if not request.user.is_authenticated %}
+-      <a href="{% url 'signup' %}" class="mr-5 hover:text-gray-900">Signup</a>
+-      {% endif %}
+-    </nav>
+-    {% if request.user.is_authenticated %}
+-      You are logged in: {{ request.user.username }}
+-       <a href="{% url 'logout' %}" class="ml-3 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Log-out
+-      <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+-        <path d="M5 12h14M12 5l7 7-7 7"></path>
+-      </svg>
+-    {% else %}
+-    <a href="{% url 'login' %}" class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Log-In
+-      <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+-        <path d="M5 12h14M12 5l7 7-7 7"></path>
+-      </svg>
+-    {% endif %}
+-    </a>
+-  </div>
++    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
++        <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
++            <svg class="w-10 h-10 text-white p-2 bg-green-500 rounded-full" fill="none" stroke="currentColor" stroke-linecap="round"
++                 stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
++                 xmlns="http://www.w3.org/2000/svg">
++                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
++            </svg>
++            <span class="ml-3 text-xl">Dera-CRM</span>
++        </a>
++        <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
++            <a class="mr-5 hover:text-gray-900" href="{% url 'leads:lead-list' %}">Leads</a>
++            {% if not request.user.is_authenticated %}
++            <a class="mr-5 hover:text-gray-900" href="{% url 'signup' %}">Signup</a>
++            {% endif %}
++        </nav>
++        {% if request.user.is_authenticated %}
++        You are logged in: {{ request.user.username }}
++        <a class="ml-3 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
++           href="{% url 'logout' %}">Log-out
++            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
++                 stroke-width="2" viewBox="0 0 24 24">
++                <path d="M5 12h14M12 5l7 7-7 7"></path>
++            </svg>
++            {% else %}
++            <a class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
++               href="{% url 'login' %}">Log-In
++                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
++                     stroke-width="2" viewBox="0 0 24 24">
++                    <path d="M5 12h14M12 5l7 7-7 7"></path>
++                </svg>
++                {% endif %}
++            </a>
++    </div>
+ </header>
+\ No newline at end of file
+Index: Leads/templates/leads/lead_update.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"base.html\" %}\r\n\r\n{% block content %}\r\n\r\n<section class=\"text-gray-600 body-font overflow-hidden\">\r\n  <div class=\"container px-5 py-24 mx-auto\">\r\n    <div class=\"lg:w-full mx-auto flex flex-wrap\">\r\n      <div class=\"lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0\">\r\n        <h2 class=\"text-sm title-font text-gray-500 tracking-widest\">LEAD</h2>\r\n        <h1 class=\"text-gray-900 text-3xl title-font font-medium mb-4\">{{lead.first_name}} {{lead.last_name}}</h1>\r\n        <div class=\"flex mb-4\">\r\n          <a class=\"flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500\" href = \"{% url 'leads:lead-detail' lead.pk %}\">Details</a>\r\n          <a class=\"flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1\" >Update</a>\r\n          <a class=\"flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500\" href=\"% url 'leads:lead-delete' lead.pk %\">Delete</a>\r\n        </div>\r\n          <h1>Update lead {{ lead.first_name }} {{ lead.last_name }} </h1>\r\n        <form method=\"post\">\r\n             {% csrf_token %}\r\n             {{ form.as_p}}\r\n             <button>SUBMIT</button>\r\n        </form>\r\n\r\n       </div>\r\n    </div>\r\n  </div>\r\n</section>\r\n\r\n{% endblock content %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/leads/lead_update.html b/Leads/templates/leads/lead_update.html
+--- a/Leads/templates/leads/lead_update.html	
++++ b/Leads/templates/leads/lead_update.html	
+@@ -3,26 +3,29 @@
+ {% block content %}
+ 
+ <section class="text-gray-600 body-font overflow-hidden">
+-  <div class="container px-5 py-24 mx-auto">
+-    <div class="lg:w-full mx-auto flex flex-wrap">
+-      <div class="lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
+-        <h2 class="text-sm title-font text-gray-500 tracking-widest">LEAD</h2>
+-        <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{lead.first_name}} {{lead.last_name}}</h1>
+-        <div class="flex mb-4">
+-          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500" href = "{% url 'leads:lead-detail' lead.pk %}">Details</a>
+-          <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1" >Update</a>
+-          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500" href="% url 'leads:lead-delete' lead.pk %">Delete</a>
+-        </div>
+-          <h1>Update lead {{ lead.first_name }} {{ lead.last_name }} </h1>
+-        <form method="post">
+-             {% csrf_token %}
+-             {{ form.as_p}}
+-             <button>SUBMIT</button>
+-        </form>
++    <div class="container px-5 py-24 mx-auto">
++        <div class="lg:w-full mx-auto flex flex-wrap">
++            <div class="lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
++                <h2 class="text-sm title-font text-gray-500 tracking-widest">LEAD</h2>
++                <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{lead.first_name}}
++                    {{lead.last_name}}</h1>
++                <div class="flex mb-4">
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="{% url 'leads:lead-detail' lead.pk %}">Details</a>
++                    <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1">Update</a>
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="% url 'leads:lead-delete' lead.pk %">Delete</a>
++                </div>
++                <h1>Update lead {{ lead.first_name }} {{ lead.last_name }} </h1>
++                <form method="post">
++                    {% csrf_token %}
++                    {{ form.as_p}}
++                    <button>SUBMIT</button>
++                </form>
+ 
+-       </div>
+-    </div>
+-  </div>
++            </div>
++        </div>
++    </div>
+ </section>
+ 
+ {% endblock content %}
+\ No newline at end of file
+Index: Leads/templates/leads/lead_delete.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"base.html\" %}\r\n\r\n{% block content %}\r\n    <a href = \"{% url 'leads:lead-list' %}\">Leads</a>\r\n    <hr>\r\n    <h1>Are you sure you want to delete lead?</h1>\r\n    <form method=\"post\">\r\n         {% csrf_token %}\r\n         {{ form.as_p}}\r\n        <button>SUBMIT</button>\r\n    </form>\r\n    <a href = \"{% url 'leads:lead-detail' lead.pk %}\">Cancel</a>\r\n{% endblock content %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/leads/lead_delete.html b/Leads/templates/leads/lead_delete.html
+--- a/Leads/templates/leads/lead_delete.html	
++++ b/Leads/templates/leads/lead_delete.html	
+@@ -1,13 +1,13 @@
+ {% extends "base.html" %}
+ 
+ {% block content %}
+-    <a href = "{% url 'leads:lead-list' %}">Leads</a>
+-    <hr>
+-    <h1>Are you sure you want to delete lead?</h1>
+-    <form method="post">
+-         {% csrf_token %}
+-         {{ form.as_p}}
+-        <button>SUBMIT</button>
+-    </form>
+-    <a href = "{% url 'leads:lead-detail' lead.pk %}">Cancel</a>
++<a href="{% url 'leads:lead-list' %}">Leads</a>
++<hr>
++<h1>Are you sure you want to delete lead?</h1>
++<form method="post">
++    {% csrf_token %}
++    {{ form.as_p}}
++    <button>SUBMIT</button>
++</form>
++<a href="{% url 'leads:lead-detail' lead.pk %}">Cancel</a>
+ {% endblock content %}
+\ No newline at end of file
+Index: Leads/templates/leads/lead_create.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"base.html\" %}\r\n\r\n{% block content %}\r\n    <a href = \"{% url 'leads:lead-list' %}\">Leads</a>\r\n    <hr>\r\n    <h1>Create a new lead</h1>\r\n    <form method=\"post\">\r\n         {% csrf_token %}\r\n         {{ form.as_p}}\r\n        <button>SUBMIT</button>\r\n    </form>\r\n{% endblock content %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/leads/lead_create.html b/Leads/templates/leads/lead_create.html
+--- a/Leads/templates/leads/lead_create.html	
++++ b/Leads/templates/leads/lead_create.html	
+@@ -1,12 +1,12 @@
+ {% extends "base.html" %}
+ 
+ {% block content %}
+-    <a href = "{% url 'leads:lead-list' %}">Leads</a>
+-    <hr>
+-    <h1>Create a new lead</h1>
+-    <form method="post">
+-         {% csrf_token %}
+-         {{ form.as_p}}
+-        <button>SUBMIT</button>
+-    </form>
++<a href="{% url 'leads:lead-list' %}">Leads</a>
++<hr>
++<h1>Create a new lead</h1>
++<form method="post">
++    {% csrf_token %}
++    {{ form.as_p}}
++    <button>SUBMIT</button>
++</form>
+ {% endblock content %}
+\ No newline at end of file
+Index: Leads/urls.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from CRM.urls import path\r\nfrom .views import LeadList, LeadDetailView, LeadCreateView, LeadUpdateView, LeadDeleteView\r\napp_name = \"Leads\"\r\nurlpatterns = [\r\n    path('', LeadList.as_view(), name='lead-list'),\r\n    path('<int:pk>/', LeadDetailView.as_view(), name='lead-detail'),\r\n    path('<int:pk>/update/', LeadUpdateView.as_view(), name='lead-update'),\r\n    path('<int:pk>/delete/', LeadDeleteView.as_view(), name='lead-delete'),\r\n    path('create/', LeadCreateView.as_view(), name='lead-create'),\r\n]
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/urls.py b/Leads/urls.py
+--- a/Leads/urls.py	
++++ b/Leads/urls.py	
+@@ -1,5 +1,6 @@
+ from CRM.urls import path
+ from .views import LeadList, LeadDetailView, LeadCreateView, LeadUpdateView, LeadDeleteView
++
+ app_name = "Leads"
+ urlpatterns = [
+     path('', LeadList.as_view(), name='lead-list'),
+@@ -7,4 +8,4 @@
+     path('<int:pk>/update/', LeadUpdateView.as_view(), name='lead-update'),
+     path('<int:pk>/delete/', LeadDeleteView.as_view(), name='lead-delete'),
+     path('create/', LeadCreateView.as_view(), name='lead-create'),
+-]
+\ No newline at end of file
++]
+Index: Leads/forms.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django import forms\r\nfrom .models import Lead, User\r\nfrom django.contrib.auth.forms import UserCreationForm, UsernameField\r\n\r\n\r\nclass LeadModelForm(forms.ModelForm):\r\n    class Meta:\r\n        model = Lead\r\n        fields = (\r\n            'first_name',\r\n            'last_name',\r\n            'cell_num',\r\n            'e_mail',\r\n            'addons',\r\n            'agent',\r\n        )\r\n\r\n\r\nclass LeadForm(forms.Form):\r\n    first_name = forms.CharField(max_length=30)\r\n    last_name = forms.CharField(max_length=30)\r\n    cell_num = forms.IntegerField()\r\n    e_mail = forms.CharField(max_length=50)\r\n    addons = forms.FileField(required=False)\r\n\r\n\r\nclass NewUserCreationForm(UserCreationForm):\r\n    class Meta:\r\n        model = User\r\n        fields = (\"username\",)\r\n        field_classes = {'username' : UsernameField}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/forms.py b/Leads/forms.py
+--- a/Leads/forms.py	
++++ b/Leads/forms.py	
+@@ -1,7 +1,8 @@
+ from django import forms
+-from .models import Lead, User
+ from django.contrib.auth.forms import UserCreationForm, UsernameField
+ 
++from .models import Lead, User
++
+ 
+ class LeadModelForm(forms.ModelForm):
+     class Meta:
+@@ -28,4 +29,4 @@
+     class Meta:
+         model = User
+         fields = ("username",)
+-        field_classes = {'username' : UsernameField}
+\ No newline at end of file
++        field_classes = {'username': UsernameField}
+Index: Leads/templates/leads/lead_detail.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"base.html\" %}\r\n\r\n{% block content %}\r\n\r\n<section class=\"text-gray-600 body-font overflow-hidden\">\r\n  <div class=\"container px-5 py-24 mx-auto\">\r\n    <div class=\"lg:w-full mx-auto flex flex-wrap\">\r\n      <div class=\"lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0\">\r\n        <h2 class=\"text-sm title-font text-gray-500 tracking-widest\">LEAD</h2>\r\n        <h1 class=\"text-gray-900 text-3xl title-font font-medium mb-4\">{{lead.first_name}} {{lead.last_name}}</h1>\r\n        <div class=\"flex mb-4\">\r\n          <a class=\"flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1\">Details</a>\r\n          <a class=\"flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500\" href = \"{% url 'leads:lead-update' lead.pk %}\">Update</a>\r\n          <a class=\"flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500\" href = \"{% url 'leads:lead-delete' lead.pk %}\">Delete</a>\r\n        </div>\r\n        <div class=\"flex border-t border-gray-200 py-2\">\r\n          <span class=\"text-gray-500\">Firstname:</span>\r\n          <span class=\"ml-auto text-gray-900\">{{lead.first_name}}</span>\r\n        </div>\r\n        <div class=\"flex border-t border-gray-200 py-2\">\r\n          <span class=\"text-gray-500\">Lastname:</span>\r\n          <span class=\"ml-auto text-gray-900\">{{lead.last_name}}</span>\r\n        </div>\r\n        <div class=\"flex border-t border-gray-200 py-2\">\r\n          <span class=\"text-gray-500\">E-mail</span>\r\n          <span class=\"ml-auto text-gray-900\">{{lead.e_mail}}</span>\r\n        </div>\r\n        <div class=\"flex border-t border-gray-200 py-2\">\r\n          <span class=\"text-gray-500\">Cell Number</span>\r\n          <span class=\"ml-auto text-gray-900\">{{lead.cell_num}}</span>\r\n        </div>\r\n        <div class=\"flex border-t border-gray-200 py-2\">\r\n          <span class=\"text-gray-500\">Agent</span>\r\n          <span class=\"ml-auto text-gray-900\">{{lead.agent}}</span>\r\n        </div>\r\n        <div class=\"flex border-t border-b mb-6 border-gray-200 py-2\">\r\n          <span class=\"text-gray-500\">Status</span>\r\n          <span class=\"ml-auto text-gray-900\">{{lead.status}}</span>\r\n        </div>\r\n          <!--Add file field download-->\r\n    </div>\r\n  </div>\r\n</section>\r\n{% endblock content %}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/leads/lead_detail.html b/Leads/templates/leads/lead_detail.html
+--- a/Leads/templates/leads/lead_detail.html	
++++ b/Leads/templates/leads/lead_detail.html	
+@@ -3,42 +3,45 @@
+ {% block content %}
+ 
+ <section class="text-gray-600 body-font overflow-hidden">
+-  <div class="container px-5 py-24 mx-auto">
+-    <div class="lg:w-full mx-auto flex flex-wrap">
+-      <div class="lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
+-        <h2 class="text-sm title-font text-gray-500 tracking-widest">LEAD</h2>
+-        <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{lead.first_name}} {{lead.last_name}}</h1>
+-        <div class="flex mb-4">
+-          <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1">Details</a>
+-          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500" href = "{% url 'leads:lead-update' lead.pk %}">Update</a>
+-          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500" href = "{% url 'leads:lead-delete' lead.pk %}">Delete</a>
+-        </div>
+-        <div class="flex border-t border-gray-200 py-2">
+-          <span class="text-gray-500">Firstname:</span>
+-          <span class="ml-auto text-gray-900">{{lead.first_name}}</span>
+-        </div>
+-        <div class="flex border-t border-gray-200 py-2">
+-          <span class="text-gray-500">Lastname:</span>
+-          <span class="ml-auto text-gray-900">{{lead.last_name}}</span>
+-        </div>
+-        <div class="flex border-t border-gray-200 py-2">
+-          <span class="text-gray-500">E-mail</span>
+-          <span class="ml-auto text-gray-900">{{lead.e_mail}}</span>
+-        </div>
+-        <div class="flex border-t border-gray-200 py-2">
+-          <span class="text-gray-500">Cell Number</span>
+-          <span class="ml-auto text-gray-900">{{lead.cell_num}}</span>
+-        </div>
+-        <div class="flex border-t border-gray-200 py-2">
+-          <span class="text-gray-500">Agent</span>
+-          <span class="ml-auto text-gray-900">{{lead.agent}}</span>
+-        </div>
+-        <div class="flex border-t border-b mb-6 border-gray-200 py-2">
+-          <span class="text-gray-500">Status</span>
+-          <span class="ml-auto text-gray-900">{{lead.status}}</span>
+-        </div>
+-          <!--Add file field download-->
+-    </div>
+-  </div>
++    <div class="container px-5 py-24 mx-auto">
++        <div class="lg:w-full mx-auto flex flex-wrap">
++            <div class="lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
++                <h2 class="text-sm title-font text-gray-500 tracking-widest">LEAD</h2>
++                <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{lead.first_name}}
++                    {{lead.last_name}}</h1>
++                <div class="flex mb-4">
++                    <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1">Details</a>
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="{% url 'leads:lead-update' lead.pk %}">Update</a>
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="{% url 'leads:lead-delete' lead.pk %}">Delete</a>
++                </div>
++                <div class="flex border-t border-gray-200 py-2">
++                    <span class="text-gray-500">Firstname:</span>
++                    <span class="ml-auto text-gray-900">{{lead.first_name}}</span>
++                </div>
++                <div class="flex border-t border-gray-200 py-2">
++                    <span class="text-gray-500">Lastname:</span>
++                    <span class="ml-auto text-gray-900">{{lead.last_name}}</span>
++                </div>
++                <div class="flex border-t border-gray-200 py-2">
++                    <span class="text-gray-500">E-mail</span>
++                    <span class="ml-auto text-gray-900">{{lead.e_mail}}</span>
++                </div>
++                <div class="flex border-t border-gray-200 py-2">
++                    <span class="text-gray-500">Cell Number</span>
++                    <span class="ml-auto text-gray-900">{{lead.cell_num}}</span>
++                </div>
++                <div class="flex border-t border-gray-200 py-2">
++                    <span class="text-gray-500">Agent</span>
++                    <span class="ml-auto text-gray-900">{{lead.agent}}</span>
++                </div>
++                <div class="flex border-t border-b mb-6 border-gray-200 py-2">
++                    <span class="text-gray-500">Status</span>
++                    <span class="ml-auto text-gray-900">{{lead.status}}</span>
++                </div>
++                <!--Add file field download-->
++            </div>
++        </div>
+ </section>
+ {% endblock content %}
+Index: Leads/templates/leads/lead_list.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"base.html\" %}\r\n\r\n{% block content %}\r\n\r\n<section class=\"text-gray-600 body-font\">\r\n  <div class=\"container px-5 py-24 mx-auto flex flex-wrap\">\r\n    <div class=\"w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200\">\r\n        <div>\r\n            <h1 class=\"text-4xl text-gray-800\">Leads</h1>\r\n        </div>\r\n        <div>\r\n            <a class=\"text-gray-500 hover:text-blue-500\" href = \"{% url 'leads:lead-create' %}\">Create a lead</a>\r\n        </div>\r\n    </div>\r\n    <div class=\"flex flex-wrap -m-4\">\r\n     {% for lead in leads %}\r\n      <div class=\"p-4 lg:w-1/2 md:w-full\">\r\n        <div class=\"flex border-2 rounded-lg border-gray-200 border-opacity-50 p-8 sm:flex-row flex-col\">\r\n          <div class=\"flex-grow\">\r\n            <h2 class=\"text-gray-900 text-lg title-font font-medium mb-3\">\r\n                {{lead.e_mail}}\r\n            </h2>\r\n            <p class=\"leading-relaxed text-base\">\r\n                {{ lead.status }}\r\n            </p>\r\n            <a href = \" {% url 'leads:lead-detail' lead.pk %}\" class=\"mt-3 text-green-500 inline-flex items-center\">\r\n                Detail View\r\n              <svg fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" class=\"w-4 h-4 ml-2\" viewBox=\"0 0 24 24\">\r\n                <path d=\"M5 12h14M12 5l7 7-7 7\"></path>\r\n              </svg>\r\n            </a>\r\n          </div>\r\n        </div>\r\n      </div>\r\n     {% endfor %}\r\n    </div>\r\n  </div>\r\n</section>\r\n\r\n{% endblock content %}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/templates/leads/lead_list.html b/Leads/templates/leads/lead_list.html
+--- a/Leads/templates/leads/lead_list.html	
++++ b/Leads/templates/leads/lead_list.html	
+@@ -3,38 +3,40 @@
+ {% block content %}
+ 
+ <section class="text-gray-600 body-font">
+-  <div class="container px-5 py-24 mx-auto flex flex-wrap">
+-    <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200">
+-        <div>
+-            <h1 class="text-4xl text-gray-800">Leads</h1>
+-        </div>
+-        <div>
+-            <a class="text-gray-500 hover:text-blue-500" href = "{% url 'leads:lead-create' %}">Create a lead</a>
+-        </div>
+-    </div>
+-    <div class="flex flex-wrap -m-4">
+-     {% for lead in leads %}
+-      <div class="p-4 lg:w-1/2 md:w-full">
+-        <div class="flex border-2 rounded-lg border-gray-200 border-opacity-50 p-8 sm:flex-row flex-col">
+-          <div class="flex-grow">
+-            <h2 class="text-gray-900 text-lg title-font font-medium mb-3">
+-                {{lead.e_mail}}
+-            </h2>
+-            <p class="leading-relaxed text-base">
+-                {{ lead.status }}
+-            </p>
+-            <a href = " {% url 'leads:lead-detail' lead.pk %}" class="mt-3 text-green-500 inline-flex items-center">
+-                Detail View
+-              <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-2" viewBox="0 0 24 24">
+-                <path d="M5 12h14M12 5l7 7-7 7"></path>
+-              </svg>
+-            </a>
+-          </div>
+-        </div>
+-      </div>
+-     {% endfor %}
+-    </div>
+-  </div>
++    <div class="container px-5 py-24 mx-auto flex flex-wrap">
++        <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200">
++            <div>
++                <h1 class="text-4xl text-gray-800">Leads</h1>
++            </div>
++            <div>
++                <a class="text-gray-500 hover:text-blue-500" href="{% url 'leads:lead-create' %}">Create a lead</a>
++            </div>
++        </div>
++        <div class="flex flex-wrap -m-4">
++            {% for lead in leads %}
++            <div class="p-4 lg:w-1/2 md:w-full">
++                <div class="flex border-2 rounded-lg border-gray-200 border-opacity-50 p-8 sm:flex-row flex-col">
++                    <div class="flex-grow">
++                        <h2 class="text-gray-900 text-lg title-font font-medium mb-3">
++                            {{lead.e_mail}}
++                        </h2>
++                        <p class="leading-relaxed text-base">
++                            {{ lead.status }}
++                        </p>
++                        <a class="mt-3 text-green-500 inline-flex items-center"
++                           href=" {% url 'leads:lead-detail' lead.pk %}">
++                            Detail View
++                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" stroke-linecap="round"
++                                 stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
++                                <path d="M5 12h14M12 5l7 7-7 7"></path>
++                            </svg>
++                        </a>
++                    </div>
++                </div>
++            </div>
++            {% endfor %}
++        </div>
++    </div>
+ </section>
+ 
+ {% endblock content %}
+Index: CRM/settings.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\"\"\"\r\nDjango settings for CRM project.\r\n\r\nGenerated by 'django-admin startproject' using Django 3.1.4.\r\n\r\nFor more information on this file, see\r\nhttps://docs.djangoproject.com/en/3.1/topics/settings/\r\n\r\nFor the full list of settings and their values, see\r\nhttps://docs.djangoproject.com/en/3.1/ref/settings/\r\n\"\"\"\r\n\r\nfrom pathlib import Path\r\n\r\n# Build paths inside the project like this: BASE_DIR / 'subdir'.\r\nBASE_DIR = Path(__file__).resolve().parent.parent\r\n\r\n\r\n# Quick-start development settings - unsuitable for production\r\n# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/\r\n\r\n# SECURITY WARNING: keep the secret key used in production secret!\r\nSECRET_KEY = '_@-ue+%zxo7q44x2wdv)pl&yn(s_svr)bh%=*e0#ds*w371ohd'\r\n\r\n# SECURITY WARNING: don't run with debug turned on in production!\r\nDEBUG = True\r\n\r\nALLOWED_HOSTS = []\r\n\r\n\r\n# Application definition\r\n\r\nINSTALLED_APPS = [\r\n    'django.contrib.admin',\r\n    'django.contrib.auth',\r\n    'django.contrib.contenttypes',\r\n    'django.contrib.sessions',\r\n    'django.contrib.messages',\r\n    'django.contrib.staticfiles',\r\n    'Leads',\r\n    'agents',\r\n]\r\n\r\nMIDDLEWARE = [\r\n    'django.middleware.security.SecurityMiddleware',\r\n    'django.contrib.sessions.middleware.SessionMiddleware',\r\n    'django.middleware.common.CommonMiddleware',\r\n    'django.middleware.csrf.CsrfViewMiddleware',\r\n    'django.contrib.auth.middleware.AuthenticationMiddleware',\r\n    'django.contrib.messages.middleware.MessageMiddleware',\r\n    'django.middleware.clickjacking.XFrameOptionsMiddleware',\r\n]\r\n\r\nROOT_URLCONF = 'CRM.urls'\r\n\r\nTEMPLATES = [\r\n    {\r\n        'BACKEND': 'django.template.backends.django.DjangoTemplates',\r\n        'DIRS': [],\r\n        'APP_DIRS': True,\r\n        'OPTIONS': {\r\n            'context_processors': [\r\n                'django.template.context_processors.debug',\r\n                'django.template.context_processors.request',\r\n                'django.contrib.auth.context_processors.auth',\r\n                'django.contrib.messages.context_processors.messages',\r\n            ],\r\n        },\r\n    },\r\n]\r\n\r\nWSGI_APPLICATION = 'CRM.wsgi.application'\r\n\r\n\r\n# Database\r\n# https://docs.djangoproject.com/en/3.1/ref/settings/#databases\r\n\r\nDATABASES = {\r\n    'default': {\r\n        'ENGINE': 'django.db.backends.sqlite3',\r\n        'NAME': BASE_DIR / 'db.sqlite3',\r\n    }\r\n}\r\n\r\n\r\n# Password validation\r\n# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators\r\n\r\nAUTH_PASSWORD_VALIDATORS = [\r\n    {\r\n        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',\r\n    },\r\n    {\r\n        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',\r\n    },\r\n    {\r\n        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',\r\n    },\r\n    {\r\n        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',\r\n    },\r\n]\r\n\r\n\r\n# Internationalization\r\n# https://docs.djangoproject.com/en/3.1/topics/i18n/\r\n\r\nLANGUAGE_CODE = 'en-us'\r\n\r\nTIME_ZONE = 'UTC'\r\n\r\nUSE_I18N = True\r\n\r\nUSE_L10N = True\r\n\r\nUSE_TZ = True\r\n\r\n\r\n# Static files (CSS, JavaScript, Images)\r\n# https://docs.djangoproject.com/en/3.1/howto/static-files/\r\n\r\nSTATIC_URL = '/static/'\r\nSTATICFILES_DIRS = [\r\n    BASE_DIR / \"static\"\r\n]\r\nSTATIC_ROOT = \"static_root\"\r\n\r\nAUTH_USER_MODEL = 'Leads.User'\r\nEMAIL_BACKEND = \"django.core.mail.backends.console.EmailBackend\"\r\nLOGIN_REDIRECT_URL = \"/leads\"\r\nLOGIN_URL = \"/login\"\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/CRM/settings.py b/CRM/settings.py
+--- a/CRM/settings.py	
++++ b/CRM/settings.py	
+@@ -15,7 +15,6 @@
+ # Build paths inside the project like this: BASE_DIR / 'subdir'.
+ BASE_DIR = Path(__file__).resolve().parent.parent
+ 
+-
+ # Quick-start development settings - unsuitable for production
+ # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
+ 
+@@ -27,7 +26,6 @@
+ 
+ ALLOWED_HOSTS = []
+ 
+-
+ # Application definition
+ 
+ INSTALLED_APPS = [
+@@ -71,7 +69,6 @@
+ 
+ WSGI_APPLICATION = 'CRM.wsgi.application'
+ 
+-
+ # Database
+ # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+ 
+@@ -82,7 +79,6 @@
+     }
+ }
+ 
+-
+ # Password validation
+ # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+ 
+@@ -101,7 +97,6 @@
+     },
+ ]
+ 
+-
+ # Internationalization
+ # https://docs.djangoproject.com/en/3.1/topics/i18n/
+ 
+@@ -115,7 +110,6 @@
+ 
+ USE_TZ = True
+ 
+-
+ # Static files (CSS, JavaScript, Images)
+ # https://docs.djangoproject.com/en/3.1/howto/static-files/
+ 
+Index: CRM/urls.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django.conf import settings\r\nfrom django.conf.urls.static import static\r\nfrom django.contrib import admin\r\nfrom django.contrib.auth.views import LoginView, LogoutView\r\nfrom django.urls import path, include\r\nfrom .views import landing_page, SignupView\r\n\r\n\r\n\r\nurlpatterns = [\r\n    path('admin/', admin.site.urls),\r\n    path('', landing_page, name='landing-page'),\r\n    path('leads/', include('Leads.urls', namespace=\"leads\")),\r\n    path('agents/', include('agents.urls', namespace=\"agents\")),\r\n    path('login/', LoginView.as_view(), name='login'),\r\n    path('logout/', LogoutView.as_view(), name='logout'),\r\n    path('signup/', SignupView.as_view(), name='signup'),\r\n]\r\nif settings.DEBUG:\r\n    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/CRM/urls.py b/CRM/urls.py
+--- a/CRM/urls.py	
++++ b/CRM/urls.py	
+@@ -3,10 +3,9 @@
+ from django.contrib import admin
+ from django.contrib.auth.views import LoginView, LogoutView
+ from django.urls import path, include
++
+ from .views import landing_page, SignupView
+ 
+-
+-
+ urlpatterns = [
+     path('admin/', admin.site.urls),
+     path('', landing_page, name='landing-page'),
+Index: Leads/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django.shortcuts import render, redirect, reverse\r\nfrom django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView\r\nfrom django.core.mail import send_mail\r\nfrom django.contrib.auth.mixins import LoginRequiredMixin\r\nfrom .models import Lead, Agent\r\nfrom .forms import LeadModelForm\r\n\r\n\r\nclass LeadList(LoginRequiredMixin, ListView):\r\n    template_name = \"leads/lead_list.html\"\r\n    queryset = Lead.objects.all()\r\n    context_object_name = \"leads\"\r\n\r\n\r\nclass LeadDetailView(LoginRequiredMixin, DetailView):\r\n    template_name = \"leads/lead_detail.html\"\r\n    queryset = Lead.objects.all()\r\n    context_object_name = \"lead\"\r\n\r\n\r\nclass LeadCreateView(LoginRequiredMixin, CreateView):\r\n    template_name = \"leads/lead_create.html\"\r\n    form_class = LeadModelForm\r\n\r\n    def get_success_url(self):\r\n        return reverse(\"leads:lead-list\")\r\n\r\n    def form_valid(self, form):\r\n        send_mail(\r\n            subject=\"A lead has been created\",\r\n            message=f\"Your Lead for has been created\",\r\n            from_email=\"adamin@test.com\",\r\n            recipient_list=[\"adam.dera98@gmail.com\"], #Delete after testing\r\n        )\r\n        return super(LeadCreateView, self).form_valid(form)\r\n\r\n\r\n# def lead_update(request, pk):\r\n#     lead = Lead.objects.get(id=pk)\r\n#     form = LeadModelForm(instance=lead)\r\n#     if request.method == \"POST\":\r\n#         print ('POST received')\r\n#         form = LeadModelForm(request.POST, instance=lead)\r\n#         if form.is_valid():\r\n#             form.save()\r\n#             return redirect(f\"/leads/{pk}\")\r\n#     context = {\r\n#         \"form\" : form,\r\n#         'lead' : lead\r\n#     }\r\n#     return render(request, \"leads/lead_update.html\", context)\r\n\r\n\r\nclass LeadUpdateView(LoginRequiredMixin, UpdateView):\r\n    template_name = \"leads/lead_update.html\"\r\n    queryset = Lead.objects.all()\r\n    form_class = LeadModelForm\r\n\r\n    def get_success_url(self):\r\n        return reverse(\"leads:lead-detail\", kwargs={'pk' : self.object.pk})\r\n\r\n\r\n\r\nclass LeadDeleteView(LoginRequiredMixin, DeleteView):\r\n    template_name = \"leads/lead_delete.html\"\r\n    queryset = Lead.objects.all()\r\n\r\n    def get_success_url(self):\r\n        return reverse(\"leads:lead-list\")
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/views.py b/Leads/views.py
+--- a/Leads/views.py	
++++ b/Leads/views.py	
+@@ -1,9 +1,10 @@
+-from django.shortcuts import render, redirect, reverse
++from django.contrib.auth.mixins import LoginRequiredMixin
++from django.core.mail import send_mail
++from django.shortcuts import reverse
+ from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+-from django.core.mail import send_mail
+-from django.contrib.auth.mixins import LoginRequiredMixin
+-from .models import Lead, Agent
++
+ from .forms import LeadModelForm
++from .models import Lead
+ 
+ 
+ class LeadList(LoginRequiredMixin, ListView):
+@@ -30,7 +31,7 @@
+             subject="A lead has been created",
+             message=f"Your Lead for has been created",
+             from_email="adamin@test.com",
+-            recipient_list=["adam.dera98@gmail.com"], #Delete after testing
++            recipient_list=["adam.dera98@gmail.com"],  # Delete after testing
+         )
+         return super(LeadCreateView, self).form_valid(form)
+ 
+@@ -57,13 +58,12 @@
+     form_class = LeadModelForm
+ 
+     def get_success_url(self):
+-        return reverse("leads:lead-detail", kwargs={'pk' : self.object.pk})
++        return reverse("leads:lead-detail", kwargs={'pk': self.object.pk})
+ 
+ 
+-
+ class LeadDeleteView(LoginRequiredMixin, DeleteView):
+     template_name = "leads/lead_delete.html"
+     queryset = Lead.objects.all()
+ 
+     def get_success_url(self):
+-        return reverse("leads:lead-list")
+\ No newline at end of file
++        return reverse("leads:lead-list")
+Index: Leads/models.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django.db import models\r\nfrom django.db.models.signals import post_save\r\nfrom django.contrib.auth.models import AbstractUser\r\n\r\n\r\nclass User(AbstractUser):\r\n    pass\r\n\r\n\r\nclass UserProfile(models.Model):\r\n    user = models.OneToOneField(User, on_delete=models.CASCADE)\r\n\r\n    def __str__(self):\r\n        return self.user.username\r\n\r\n\r\nclass Agent(models.Model):\r\n    user = models.OneToOneField(User, on_delete=models.CASCADE)\r\n    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)\r\n\r\n    def __str__(self):\r\n        return f\"{self.user.first_name} {self.user.last_name}\"\r\n\r\n\r\nclass Lead(models.Model):\r\n    BEFORE_CONTACT = 'Before first contact'\r\n    DURING_PROCESS = 'During process'\r\n    AFTER_PROCESS = 'After process'\r\n    SERVICE = 'Service'\r\n    REJECTED = 'Rejected'\r\n    STATUS = [\r\n        (BEFORE_CONTACT, 'Before first contact'),\r\n        (DURING_PROCESS, 'During process'),\r\n        (AFTER_PROCESS, 'After process'),\r\n        (SERVICE, 'Service'),\r\n        (REJECTED, 'Rejected'),\r\n    ]\r\n\r\n    first_name = models.CharField(max_length=30)\r\n    last_name = models.CharField(max_length=30)\r\n    cell_num = models.IntegerField()\r\n    e_mail = models.CharField(max_length=50)\r\n    status = models.CharField(max_length=32, choices=STATUS, default='before first contact')\r\n    addons = models.FileField(blank=True, null=True)\r\n    agent = models.ForeignKey(Agent, on_delete=models.SET_NULL, null=True)\r\n\r\n    def __str__(self):\r\n        return self.e_mail\r\n\r\n\r\ndef post_user_created_signal(sender, instance, created, **kwargs):\r\n    print(instance, created)\r\n    if created:\r\n        UserProfile.objects.create(user=instance)\r\n\r\n\r\n\r\npost_save.connect(post_user_created_signal, sender=User)\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/models.py b/Leads/models.py
+--- a/Leads/models.py	
++++ b/Leads/models.py	
+@@ -1,6 +1,6 @@
++from django.contrib.auth.models import AbstractUser
+ from django.db import models
+ from django.db.models.signals import post_save
+-from django.contrib.auth.models import AbstractUser
+ 
+ 
+ class User(AbstractUser):
+@@ -54,7 +54,4 @@
+         UserProfile.objects.create(user=instance)
+ 
+ 
+-
+ post_save.connect(post_user_created_signal, sender=User)
+-
+-
+Index: Leads/tests.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django.test import TestCase\r\nfrom django.shortcuts import reverse\r\n\r\n\r\nclass LandingPageTest(TestCase):\r\n    def test_landing_page_get(self):\r\n        response = self.client.get(reverse(\"landing-page\"))\r\n        self.assertEqual(response.status_code, 200)\r\n        self.assertTemplateUsed(response, \"landing.html\")\r\n\r\n#TO DO: write rest of the tests for views
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/tests.py b/Leads/tests.py
+--- a/Leads/tests.py	
++++ b/Leads/tests.py	
+@@ -1,5 +1,5 @@
+-from django.test import TestCase
+ from django.shortcuts import reverse
++from django.test import TestCase
+ 
+ 
+ class LandingPageTest(TestCase):
+@@ -8,4 +8,4 @@
+         self.assertEqual(response.status_code, 200)
+         self.assertTemplateUsed(response, "landing.html")
+ 
+-#TO DO: write rest of the tests for views
+\ No newline at end of file
++# TO DO: write rest of the tests for views
+Index: Leads/admin.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from django.contrib import admin\r\nfrom .models import User, Lead, Agent, UserProfile\r\n\r\nadmin.site.register(Lead)\r\nadmin.site.register(User)\r\nadmin.site.register(UserProfile)\r\nadmin.site.register(Agent)\r\n# Register your models here.\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Leads/admin.py b/Leads/admin.py
+--- a/Leads/admin.py	
++++ b/Leads/admin.py	
+@@ -1,4 +1,5 @@
+ from django.contrib import admin
++
+ from .models import User, Lead, Agent, UserProfile
+ 
+ admin.site.register(Lead)
+Index: agents/templates/agents/agent_update.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/templates/agents/agent_update.html b/agents/templates/agents/agent_update.html
+new file mode 100644
+--- /dev/null	
++++ b/agents/templates/agents/agent_update.html	
+@@ -0,0 +1,31 @@
++{% extends "base.html" %}
++
++{% block content %}
++
++<section class="text-gray-600 body-font overflow-hidden">
++    <div class="container px-5 py-24 mx-auto">
++        <div class="lg:w-full mx-auto flex flex-wrap">
++            <div class="lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
++                <h2 class="text-sm title-font text-gray-500 tracking-widest">Agent</h2>
++                <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{ agent.user.username}}</h1>
++                <div class="flex mb-4">
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="{% url 'agents:agent-detail' agent.pk %}">Details</a>
++                    <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1">Update</a>
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="{% url 'agents:agent-delete' agent.pk %}">Delete</a>
++                </div>
++                <h1>Update agent {{agent.user.username}} </h1>
++                <div class="flex border-t border-gray-200 py-2">
++                    <form method="post">
++                        {% csrf_token %}
++                        {{ form.as_p}}
++                        <button>SUBMIT</button>
++                    </form>
++                </div>
++            </div>
++        </div>
++    </div>
++</section>
++
++{% endblock content %}
+\ No newline at end of file
+Index: agents/templates/agents/agent_detail.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/agents/templates/agents/agent_detail.html b/agents/templates/agents/agent_detail.html
+new file mode 100644
+--- /dev/null	
++++ b/agents/templates/agents/agent_detail.html	
+@@ -0,0 +1,26 @@
++{% extends "base.html" %}
++
++{% block content %}
++
++<section class="text-gray-600 body-font overflow-hidden">
++    <div class="container px-5 py-24 mx-auto">
++        <div class="lg:w-full mx-auto flex flex-wrap">
++            <div class="lg:w-full w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
++                <h2 class="text-sm title-font text-gray-500 tracking-widest">AGENT</h2>
++                <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{agent.user.username}}</h1>
++                <div class="flex mb-4">
++                    <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1">Details</a>
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="{% url 'agents:agent-update' agent.pk %}">Update</a>
++                    <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1 hover:text-blue-500"
++                       href="{% url 'agents:agent-delete' agent.pk %}">Delete</a>
++                </div>
++                <div class="flex border-t border-gray-200 py-2">
++                    <span class="text-gray-500">Username:</span>
++                    <span class="ml-auto text-gray-900">{{agent.user.username}}</span>
++                </div>
++            </div>
++        </div>
++    </div>
++</section>
++{% endblock content %}
+diff --git a/agents/__init__.py b/agents/__init__.py
+new file mode 100644
+diff --git a/agents/migrations/__init__.py b/agents/migrations/__init__.py
+new file mode 100644
