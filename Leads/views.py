@@ -31,7 +31,7 @@ class LeadCreateView(LoginRequiredMixin, CreateView):
             subject="A lead has been created",
             message=f"Your Lead for has been created",
             from_email="adamin@test.com",
-            recipient_list=["adam.dera98@gmail.com"],  # Delete after testing
+            recipient_list=["adamintest@test.com"],  # Delete after testing
         )
         return super(LeadCreateView, self).form_valid(form)
 
